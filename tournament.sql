@@ -1,9 +1,10 @@
 /* First thing is to DROP everything that already exists so I can run multiple
 tests. */
 DROP DATABASE IF EXISTS tournament;
+DROP TABLE IF EXISTS tournament;
 DROP TABLE IF EXISTS player;
 DROP TABLE IF EXISTS match;
-DROP VIEW IF EXISTS standings;
+DROP VIEW IF EXISTS all_players;
 
 /* Now its possible to CREATE the database after all has been cleaned */
 CREATE DATABASE tournament;
@@ -18,8 +19,8 @@ CREATE TABLE tournament (
 
 CREATE TABLE player (
     PRIMARY KEY (player_id),
-    player_id INTEGER,
-    full_name VARCHAR(80)    NOT NULL
+    player_id SERIAL,
+    full_name VARCHAR(80) UNIQUE NOT NULL
 );
 
 CREATE TABLE match (
@@ -31,9 +32,7 @@ CREATE TABLE match (
     game_id   TEXT    REFERENCES tournament ON DELETE CASCADE
 );
 
-# CREATE VIEW scoreboard AS
-#     PRIMARY KEY (score, player_id),
-#     score     INTEGER DEFAULT 0,
-#     player_id INTEGER REFERENCES player,
-#     match_id  INTEGER REFERENCES match  ON DELETE CASCADE NOT NULL
-# );
+-- CREATE VIEW all_players AS
+--     SELECT player_id, COUNT(*) AS player_count
+--       FROM player
+--   HAVING player_id > 1;
