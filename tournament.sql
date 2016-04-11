@@ -32,7 +32,7 @@ CREATE TABLE match (
     game_id   TEXT    REFERENCES tournament ON DELETE CASCADE
 );
 
--- CREATE VIEW all_players AS
---     SELECT player_id, COUNT(*) AS player_count
---       FROM player
---   HAVING player_id > 1;
+CREATE VIEW all_players AS
+    SELECT player_id, COUNT(*) AS player_count
+      FROM player
+    HAVING player_id > 1;

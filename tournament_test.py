@@ -15,8 +15,10 @@ def testCount():
              player count after 1 and 2 players registered,
              player count after players deleted.
     """
+    deleteTournaments()
     deleteMatches()
     deletePlayers()
+    createTournament("Campeonato 2012")
     c = countPlayers()
     if c == '0':
         raise TypeError(
@@ -163,7 +165,7 @@ def testPairings():
 
 if __name__ == '__main__':
     testCount()
-#    testStandingsBeforeMatches()
+    testStandingsBeforeMatches()
 #    testReportMatches()
 #    testPairings()
     print "Success!  All tests pass!"

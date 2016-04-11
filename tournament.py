@@ -10,26 +10,48 @@ def connect():
     """Connect to the PostgreSQL database.  Returns a database connection."""
     return psycopg2.connect("dbname=tournament")
 
-conn = connect()
-cursor = conn.cursor()
+DB = connect()
+cur = DB.cursor()
+
+
+def deleteTournaments():
+    """Remove all the match records from the database."""
+    cur.execute("DELETE FROM tournament;")
+    DB.commit()
 
 
 def deleteMatches():
     """Remove all the match records from the database."""
-    cursor.execute("DELETE FROM match;")
-    conn.commit()
+    cur.execute("DELETE FROM match;")
+    DB.commit()
 
 
 def deletePlayers():
     """Remove all the player records from the database."""
-    cursor.execute("DELETE FROM player;")
-    conn.commit()
+    cur.execute("DELETE FROM player;")
+    DB.commit()
 
 
-def countPlayers():
-    """Returns the number of players currently registered."""
-    cursor.execute("SELECT COUNT(*) FROM player;")
-    return cursor.fetchone()[0]
+def createTournament(name):
+    """Create a new tournament.
+    Args:
+        name: the tournament's unique identifier
+    """
+    connect()
+    query = "INSERT INTO tournament (game_id) VALUES (%s) RETURNING game_id"
+    cur.execute(query, (name,))
+    tournament_id = cur.fetchone()[0]
+    DB.commit()
+    return tournament_id
+
+
+def countPlayers(tournament_id):
+    """Returns the number of players currently registered in a tournament."""
+    query = """SELECT COUNT(*)
+                     FROM player
+                    WHERE game_id = (%s);"""
+    cur.execute(query, (tournament_id,))
+    return cur.fetchone()[0]
 
 
 def registerPlayer(name):
@@ -41,8 +63,8 @@ def registerPlayer(name):
     Args:
       name: the player's full name (need not be unique).
     """
-    cursor.execute("INSERT INTO player (full_name) VALUES (%s);", (name,))
-    conn.commit()
+    cur.execute("INSERT INTO player (full_name) VALUES (%s);", (name,))
+    DB.commit()
 
 
 def playerStandings():
