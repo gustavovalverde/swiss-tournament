@@ -20,7 +20,8 @@ CREATE TABLE tournament (
 CREATE TABLE player (
     PRIMARY KEY (player_id),
     player_id SERIAL,
-    full_name VARCHAR(80) UNIQUE NOT NULL
+    full_name VARCHAR(80) UNIQUE                NOT NULL,
+    game_id   VARCHAR(50) REFERENCES tournament NOT NULL
 );
 
 CREATE TABLE match (
@@ -32,7 +33,9 @@ CREATE TABLE match (
     game_id   TEXT    REFERENCES tournament ON DELETE CASCADE
 );
 
+/*
 CREATE VIEW all_players AS
     SELECT player_id, COUNT(*) AS player_count
       FROM player
     HAVING player_id > 1;
+ */

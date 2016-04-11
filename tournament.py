@@ -54,7 +54,7 @@ def countPlayers(tournament_id):
     return cur.fetchone()[0]
 
 
-def registerPlayer(name):
+def registerPlayer(name, tournament_id):
     """Adds a player to the tournament database.
 
     The database assigns a unique serial id number for the player.  (This
@@ -63,7 +63,8 @@ def registerPlayer(name):
     Args:
       name: the player's full name (need not be unique).
     """
-    cur.execute("INSERT INTO player (full_name) VALUES (%s);", (name,))
+    cur.execute("INSERT INTO player (full_name, game_id) VALUES (%s, %s);",
+                (name, tournament_id))
     DB.commit()
 
 
