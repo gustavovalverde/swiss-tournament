@@ -37,7 +37,6 @@ def createTournament(name):
     Args:
         name: the tournament's unique identifier
     """
-    connect()
     query = "INSERT INTO tournament (game_id) VALUES (%s) RETURNING game_id"
     cur.execute(query, (name,))
     tournament_id = cur.fetchone()[0]
@@ -47,9 +46,10 @@ def createTournament(name):
 
 def countPlayers(tournament_id):
     """Returns the number of players currently registered in a tournament."""
+
     query = """SELECT COUNT(*)
-                     FROM player
-                    WHERE game_id = (%s);"""
+                 FROM player
+                WHERE signed_on = (%s);"""
     cur.execute(query, (tournament_id,))
     return cur.fetchone()[0]
 
@@ -63,12 +63,13 @@ def registerPlayer(name, tournament_id):
     Args:
       name: the player's full name (need not be unique).
     """
-    cur.execute("INSERT INTO player (full_name, game_id) VALUES (%s, %s);",
-                (name, tournament_id))
+
+    query = """INSERT INTO player (full_name, signed_on) VALUES (%s, %s);"""
+    cur.execute(query, (name, tournament_id,))
     DB.commit()
 
 
-def playerStandings():
+def playerStandings(tournament_id):
     """Returns a list of the players and their win records, sorted by wins.
 
     The first entry in the list should be the player in first place, or a
@@ -81,6 +82,9 @@ def playerStandings():
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
+    standings = "SELECT * FROM standings;"
+    cur.execute(standings, (tournament_id,))
+    return cur.fetchall()
 
 
 def reportMatch(winner, loser):

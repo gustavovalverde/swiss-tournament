@@ -1,14 +1,9 @@
 /* First thing is to DROP everything that already exists so I can run multiple
 tests. */
-DROP DATABASE IF EXISTS tournament;
-DROP TABLE IF EXISTS tournament;
-DROP TABLE IF EXISTS player;
-DROP TABLE IF EXISTS match;
-DROP VIEW IF EXISTS all_players;
-
-/* Now its possible to CREATE the database after all has been cleaned */
-CREATE DATABASE tournament;
-\c tournament;
+DROP TABLE IF EXISTS tournament CASCADE;
+DROP TABLE IF EXISTS player     CASCADE;
+DROP TABLE IF EXISTS match      CASCADE;
+DROP VIEW  IF EXISTS standings  CASCADE;
 
 /* With the DATABASE created is time to define all the TABLES for the
 tournament project.*/
@@ -19,9 +14,9 @@ CREATE TABLE tournament (
 
 CREATE TABLE player (
     PRIMARY KEY (player_id),
-    player_id SERIAL,
-    full_name VARCHAR(80) UNIQUE                NOT NULL,
-    game_id   VARCHAR(50) REFERENCES tournament NOT NULL
+    player_id   SERIAL,
+    full_name   VARCHAR(80)                                NOT NULL,
+    signed_on   VARCHAR(50) REFERENCES tournament(game_id) ON DELETE CASCADE NOT NULL
 );
 
 CREATE TABLE match (
@@ -34,10 +29,11 @@ CREATE TABLE match (
 );
 
 CREATE VIEW standings AS
-    SELECT player.player_id, player.full_name,
-           COUNT(match.winner) AS wins,
-           COUNT(match.winner) + COUNT(match.loser) AS matches
+    SELECT player_id, full_name,
+           COUNT(winner) AS wins,
+           COUNT(winner) + COUNT(loser) AS matches
       FROM player
- LEFT JOIN match ON player.player_id = match.winner
-  GROUP BY player.player_id
-  ORDER BY wins DESC;
+ LEFT JOIN match ON player_id = winner
+  GROUP BY player_id
+  ORDER BY wins DESC
+;
