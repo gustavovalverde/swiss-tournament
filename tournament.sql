@@ -33,9 +33,11 @@ CREATE TABLE match (
     game_id   TEXT    REFERENCES tournament ON DELETE CASCADE
 );
 
-/*
-CREATE VIEW all_players AS
-    SELECT player_id, COUNT(*) AS player_count
+CREATE VIEW standings AS
+    SELECT player.player_id, player.full_name,
+           COUNT(match.winner) AS wins,
+           COUNT(match.winner) + COUNT(match.loser) AS matches
       FROM player
-    HAVING player_id > 1;
- */
+ LEFT JOIN match ON player.player_id = match.winner
+  GROUP BY player.player_id
+  ORDER BY wins DESC;
