@@ -20,12 +20,12 @@ CREATE TABLE player (
 );
 
 CREATE TABLE match (
-    PRIMARY KEY (match_id, game_id),
+    PRIMARY KEY (match_id),
     match_id  SERIAL,
     winner    INTEGER REFERENCES player(player_id),
     loser     INTEGER REFERENCES player(player_id),
-    draw      BOOLEAN DEFAULT 'FALSE'       NOT NULL,
-    game_id   TEXT    REFERENCES tournament ON DELETE CASCADE
+    draw      BOOLEAN DEFAULT 'FALSE'       NOT NULL
+--  game_id   TEXT    REFERENCES tournament ON DELETE CASCADE
 );
 
 CREATE VIEW standings AS

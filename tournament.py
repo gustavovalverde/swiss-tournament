@@ -37,8 +37,8 @@ def createTournament(name):
     Args:
         name: the tournament's unique identifier
     """
-    query = "INSERT INTO tournament (game_id) VALUES (%s) RETURNING game_id"
-    cur.execute(query, (name,))
+    insert_t = "INSERT INTO tournament (game_id) VALUES (%s) RETURNING game_id"
+    cur.execute(insert_t, (name,))
     tournament_id = cur.fetchone()[0]
     DB.commit()
     return tournament_id
@@ -47,11 +47,12 @@ def createTournament(name):
 def countPlayers(tournament_id):
     """Returns the number of players currently registered in a tournament."""
 
-    query = """SELECT COUNT(*)
-                 FROM player
-                WHERE signed_on = (%s);"""
-    cur.execute(query, (tournament_id,))
-    return cur.fetchone()[0]
+    select_p = """SELECT COUNT(*)
+                    FROM player
+                   WHERE signed_on = (%s);"""
+    cur.execute(select_p, (tournament_id,))
+    qty_players = cur.fetchone()[0]
+    return qty_players
 
 
 def registerPlayer(name, tournament_id):
@@ -64,8 +65,8 @@ def registerPlayer(name, tournament_id):
       name: the player's full name (need not be unique).
     """
 
-    query = """INSERT INTO player (full_name, signed_on) VALUES (%s, %s);"""
-    cur.execute(query, (name, tournament_id,))
+    insert_p = """INSERT INTO player (full_name, signed_on) VALUES (%s, %s);"""
+    cur.execute(insert_p, (name, tournament_id,))
     DB.commit()
 
 
@@ -82,9 +83,10 @@ def playerStandings(tournament_id):
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
-    standings = "SELECT * FROM standings;"
-    cur.execute(standings, (tournament_id,))
-    return cur.fetchall()
+    select_stnds = "SELECT * FROM standings;"
+    cur.execute(select_stnds, (tournament_id,))
+    standings = cur.fetchall()
+    return standings
 
 
 def reportMatch(winner, loser):
@@ -94,7 +96,9 @@ def reportMatch(winner, loser):
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
     """
-
+    i_match = "INSERT INTO match (winner, loser) VALUES (%s, %s);"
+    cur.execute(i_match, (winner, loser,))
+    DB.commit()
 
 def swissPairings():
     """Returns a list of pairs of players for the next round of a match.
