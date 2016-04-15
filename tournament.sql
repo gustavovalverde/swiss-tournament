@@ -9,7 +9,7 @@ DROP VIEW  IF EXISTS standings  CASCADE;
 tournament project.*/
 CREATE TABLE tournament (
     PRIMARY KEY (game_id),
-    game_id   VARCHAR(50)
+    game_id   VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE player (
@@ -22,10 +22,9 @@ CREATE TABLE player (
 CREATE TABLE match (
     PRIMARY KEY (match_id),
     match_id  SERIAL,
-    winner    INTEGER REFERENCES player(player_id),
-    loser     INTEGER REFERENCES player(player_id),
+    winner    INTEGER REFERENCES player(player_id) ON DELETE CASCADE,
+    loser     INTEGER REFERENCES player(player_id) ON DELETE CASCADE,
     draw      BOOLEAN DEFAULT 'FALSE'       NOT NULL
---  game_id   TEXT    REFERENCES tournament ON DELETE CASCADE
 );
 
 CREATE VIEW standings AS
