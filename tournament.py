@@ -98,9 +98,9 @@ def playerStandings():
     DB = connect()
     cur = DB.cursor()
     cur.execute("SELECT * FROM standings;")
-    standings = cur.fetchall()
+    t_standings = cur.fetchall()
     DB.close()
-    return standings
+    return t_standings
 
 
 def reportMatch(winner, loser):
@@ -112,25 +112,8 @@ def reportMatch(winner, loser):
     """
     DB = connect()
     cur = DB.cursor()
-    # cur.execute("SELECT matches FROM standings WHERE matches = 0")
-    standings = playerStandings()
-    print standings
     i_match = "INSERT INTO match (winner, loser) VALUES (%s, %s);"
-    # s_matches = cur.fetchall()
-    # print s_matches
-    for counter, each_player in enumerate(standings):
-        if standings[counter][3] == 0:
-            print "--- BEFORE Execute ---"
-            cur.execute("SELECT * FROM match")
-            print cur.fetchone()
-            print "Execution"
-            cur.execute(i_match, (winner, loser,))
-            print "---"
-            print "--- AFTER Execute ---"
-            cur.execute("SELECT * FROM match")
-            print cur.fetchone()
-    # cur.execute("UPDATE match SET winner = %s;", (winner,))
-    # cur.execute("UPDATE match SET loser = %s;", (loser,))
+    cur.execute(i_match, (winner, loser,))
     DB.commit()
     DB.close()
 
