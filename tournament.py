@@ -37,6 +37,7 @@ def deletePlayers():
     DB.commit()
     DB.close()
 
+
 def createTournament(name):
     """Create a new tournament.
     Args:
@@ -133,3 +134,11 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
+    DB = connect()
+    cur = DB.cursor()
+    cur.execute("SELECT player_id, full_name FROM standings;")
+    pairings = cur.fetchall()
+    pairs = []
+    pairs = [(pairings[i] + pairings[i+1]) for i in range(0, len(pairings), 2)]
+    return pairs
+    DB.close()
