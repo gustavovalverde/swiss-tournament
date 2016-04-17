@@ -15,7 +15,7 @@ CREATE TABLE tournament (
 CREATE TABLE player (
     PRIMARY KEY (player_id),
     player_id   SERIAL,
-    full_name   VARCHAR(80)                                NOT NULL,
+    full_name   VARCHAR(80)                                                  NOT NULL,
     signed_on   VARCHAR(50) REFERENCES tournament(game_id) ON DELETE CASCADE NOT NULL
 );
 
