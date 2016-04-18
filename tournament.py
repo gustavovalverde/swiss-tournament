@@ -119,6 +119,25 @@ def reportMatch(winner, loser):
     DB.close()
 
 
+def isvalidMatch(winner, loser):
+    """Verify if a match is valid between two players. For a match to be valid
+    both players can't have played a match before.
+
+    Args:
+      winner:  the id number of the player who won a match
+      loser:  the id number of the player who lost a match
+    """
+    DB = connect()
+    cur = DB.cursor()
+    valid_match = """SELECT EXISTS (
+                     SELECT 1
+                       FROM match
+                      WHERE winner = %s and loser = %s
+                      ;)"""
+    cur.execute(valid_match, (winner, loser,))
+    DB.close()
+
+
 def swissPairings():
     """Returns a list of pairs of players for the next round of a match.
 
