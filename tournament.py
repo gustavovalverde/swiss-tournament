@@ -119,7 +119,7 @@ def reportMatch(winner, loser):
     DB.close()
 
 
-def isvalidMatch(winner, loser):
+def isvalidMatch(player1, player2):
     """Verify if a match is valid between two players. For a match to be valid
     both players can't have played a match before.
 
@@ -134,8 +134,9 @@ def isvalidMatch(winner, loser):
                        FROM match
                       WHERE winner = %s and loser = %s
                       ;)"""
-    cur.execute(valid_match, (winner, loser,))
+    is_valid = cur.execute(valid_match, (player1, player2,))
     DB.close()
+    return is_valid
 
 
 def swissPairings():
