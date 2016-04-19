@@ -65,7 +65,7 @@ sudo -H  pip install flake8
 sudo su postgres -c 'createuser -dRS vagrant'
 sudo su vagrant -c 'createdb'
 sudo su vagrant -c 'createdb tournament'
-sudo su vagrant -c 'psql forum -i /vagrant/swiss-tournament/tournament.sql'
+sudo su vagrant -c 'psql \i /vagrant/swiss-tournament/tournament/tournament.sql'
 
 
 echo "*********************************"
