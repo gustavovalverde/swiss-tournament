@@ -17,8 +17,8 @@ Vagrant.configure(2) do |config|
   config.vm.provider "virtualbox" do |vb|
     vb.name = "DevOps"
     vb.gui = "on"       # Display the VirtualBox GUI when booting the machine
-    vb.memory = 4096
-    vb.cpus = 2
+    vb.memory = 2048
+    vb.cpus = 1
     vb.customize ["modifyvm", :id, "--vram", 128]
     vb.customize ["modifyvm", :id, "--accelerate3d", "on"]
     vb.customize ["modifyvm", :id, "--draganddrop", "bidirectional"]
