@@ -119,7 +119,7 @@ def reportMatch(winner, loser):
     DB.close()
 
 
-def isvalidMatch(player1, player2):  # Function defined, but not tested.
+def isinvalidMatch(player1, player2):  # Function defined, but not tested.
     """Verify if a match is valid between two players. For a match to be valid
     both players can't have played a match before.
 
@@ -134,9 +134,9 @@ def isvalidMatch(player1, player2):  # Function defined, but not tested.
                        FROM match
                       WHERE winner = %s and loser = %s
                       ;)"""
-    is_valid = cur.execute(valid_match, (player1, player2,))
+    invalid_match = cur.execute(valid_match, (player1, player2,))
     DB.close()
-    return is_valid
+    return invalid_match
 
 
 def swissPairings():
@@ -159,6 +159,9 @@ def swissPairings():
     cur.execute("SELECT player_id, full_name FROM standings;")
     standings = cur.fetchall()
     pairings = []
+    # if len(pairings) % 2 != 0:
+    # Code for handling odd number of players. Coming soon.
+
     # Using list comprehension for shorter code.
     pairings = [(standings[i] + standings[i+1])
                 for i in range(0, len(standings), 2)]
