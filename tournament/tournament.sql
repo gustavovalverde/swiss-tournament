@@ -1,9 +1,9 @@
 /* First thing is to DROP everything that already exists so I can run multiple
 tests. */
-DROP TABLE IF EXISTS tournament CASCADE;
-DROP TABLE IF EXISTS player     CASCADE;
-DROP TABLE IF EXISTS match      CASCADE;
-DROP VIEW  IF EXISTS standings  CASCADE;
+DROP DATABASE IF EXISTS tournament;
+
+CREATE DATABASE tournament;
+\c tournament;
 
 /* With the DATABASE created is time to define all the TABLES for the
 tournament project.*/
