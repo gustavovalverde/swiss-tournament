@@ -119,7 +119,7 @@ def reportMatch(winner, loser):
     DB.close()
 
 
-def isinvalidMatch(player1, player2):  # Function defined, but not tested.
+def isnotvalidMatch(player1, player2):  # Function defined, but not tested.
     """Verify if a match is valid between two players. For a match to be valid
     both players can't have played a match before.
 
@@ -164,6 +164,6 @@ def swissPairings():
 
     # Using list comprehension for shorter code.
     pairings = [(standings[i] + standings[i+1])
-                for i in range(0, len(standings), 2)]
+                for i in xrange(0, len(standings), 2)]
     return pairings
     DB.close()
