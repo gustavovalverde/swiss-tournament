@@ -120,12 +120,16 @@ def reportMatch(winner, loser):
 
 
 def invalidMatch(player1, player2):  # Function defined, but not being used.
-    """Verify if a match is valid between two players. For a match to be valid
-    both players can't have played a match before.
+    """Verify if a match is not valid between two players. This is True if a
+    match has already been played between two players.
 
     Args:
       winner:  the id number of the player who won a match
       loser:  the id number of the player who lost a match
+
+    Returns:
+      True if a match has already been played by the players
+      False if a match has not been played by the  players
     """
     DB = connect()
     cur = DB.cursor()
@@ -134,9 +138,9 @@ def invalidMatch(player1, player2):  # Function defined, but not being used.
                        FROM match
                       WHERE winner = %s and loser = %s
                       );"""
-    rematch = cur.execute(invalid_match, (player1, player2,))
+    a_rematch = cur.execute(invalid_match, (player1, player2,))
     DB.close()
-    return rematch
+    return a_rematch
 
 
 def swissPairings():
@@ -164,8 +168,10 @@ def swissPairings():
 
     # Using list comprehension for shorter code.
     pairings = [(standings[i] + standings[i+1])
-                # if not invalidMatch(standings[i][1], standings[i+1][1])
-                # else standings[i] + standings[i+2]
+                if not invalidMatch(standings[i][0], standings[i+1][0])
+                # I'm not confident with this else statement, even though
+                # all tests pass. Need to do more tests.
+                else standings[i] + standings[i+2]
                 for i in xrange(0, len(standings), 2)]
-    return pairings
     DB.close()
+    return pairings
