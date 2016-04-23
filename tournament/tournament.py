@@ -33,11 +33,12 @@ def get_cursor():
         cursor.close()
         DB.close()
 
+DB = connect()
+cur = DB.cursor()
+
 
 def deleteTournaments():
     """Remove all the match records from the database."""
-    DB = connect()
-    cur = DB.cursor()
     cur.execute("DELETE FROM tournament;")
     DB.commit()
     DB.close()
@@ -45,8 +46,6 @@ def deleteTournaments():
 
 def deleteMatches():
     """Remove all the match records from the database."""
-    DB = connect()
-    cur = DB.cursor()
     cur.execute("DELETE FROM match;")
     DB.commit()
     DB.close()
@@ -54,8 +53,6 @@ def deleteMatches():
 
 def deletePlayers():
     """Remove all the player records from the database."""
-    DB = connect()
-    cur = DB.cursor()
     cur.execute("DELETE FROM player;")
     DB.commit()
     DB.close()
@@ -66,8 +63,6 @@ def createTournament(name):
     Args:
         name: the tournament's unique identifier
     """
-    DB = connect()
-    cur = DB.cursor()
     insert_t = "INSERT INTO tournament (game_id) VALUES (%s) RETURNING game_id"
     cur.execute(insert_t, (name,))
     tournament_id = cur.fetchone()[0]
@@ -98,8 +93,6 @@ def registerPlayer(name, tournament_id):
     Args:
       name: the player's full name (need not be unique).
     """
-    DB = connect()
-    cur = DB.cursor()
     insert_p = "INSERT INTO player (full_name, signed_on) VALUES (%s, %s);"
     cur.execute(insert_p, (name, tournament_id,))
     DB.commit()
@@ -119,8 +112,6 @@ def playerStandings():
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
-    DB = connect()
-    cur = DB.cursor()
     cur.execute("SELECT * FROM standings;")
     t_standings = cur.fetchall()
     DB.close()
@@ -134,8 +125,6 @@ def reportMatch(winner, loser):
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
     """
-    DB = connect()
-    cur = DB.cursor()
     i_match = "INSERT INTO match (winner, loser) VALUES (%s, %s);"
     cur.execute(i_match, (winner, loser,))
     DB.commit()
@@ -154,8 +143,6 @@ def invalidMatch(player1, player2):  # Function defined, but not being used.
       True if a match has already been played by the players
       False if a match has not been played by the  players
     """
-    DB = connect()
-    cur = DB.cursor()
     invalid_match = """SELECT EXISTS (
                      SELECT 1
                        FROM match
@@ -181,8 +168,6 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
-    DB = connect()
-    cur = DB.cursor()
     cur.execute("SELECT player_id, full_name FROM standings;")
     standings = cur.fetchall()
     pairings = []
