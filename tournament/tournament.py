@@ -33,29 +33,23 @@ def get_cursor():
         cursor.close()
         DB.close()
 
-DB = connect()
-cur = DB.cursor()
-
 
 def deleteTournaments():
     """Remove all the match records from the database."""
-    cur.execute("DELETE FROM tournament;")
-    DB.commit()
-    DB.close()
+    with get_cursor() as cursor:
+        cursor.execute("DELETE FROM tournament;")
 
 
 def deleteMatches():
     """Remove all the match records from the database."""
-    cur.execute("DELETE FROM match;")
-    DB.commit()
-    DB.close()
+    with get_cursor() as cursor:
+        cursor.execute("DELETE FROM match;")
 
 
 def deletePlayers():
     """Remove all the player records from the database."""
-    cur.execute("DELETE FROM player;")
-    DB.commit()
-    DB.close()
+    with get_cursor() as cursor:
+        cursor.execute("DELETE FROM player;")
 
 
 def createTournament(name):
@@ -64,23 +58,20 @@ def createTournament(name):
         name: the tournament's unique identifier
     """
     insert_t = "INSERT INTO tournament (game_id) VALUES (%s) RETURNING game_id"
-    cur.execute(insert_t, (name,))
-    tournament_id = cur.fetchone()[0]
-    DB.commit()
-    DB.close()
+    with get_cursor() as cursor:
+        cursor.execute(insert_t, (name,))
+        tournament_id = cursor.fetchone()[0]
     return tournament_id
 
 
 def countPlayers(tournament_id):
     """Returns the number of players currently registered in a tournament."""
-    DB = connect()
-    cur = DB.cursor()
     select_p = """SELECT COUNT(*)
                     FROM player
                    WHERE signed_on = (%s);"""
-    cur.execute(select_p, (tournament_id,))
-    qty_players = cur.fetchone()[0]
-    DB.close()
+    with get_cursor() as cursor:
+        cursor.execute(select_p, (tournament_id,))
+        qty_players = cursor.fetchone()[0]
     return qty_players
 
 
@@ -94,9 +85,8 @@ def registerPlayer(name, tournament_id):
       name: the player's full name (need not be unique).
     """
     insert_p = "INSERT INTO player (full_name, signed_on) VALUES (%s, %s);"
-    cur.execute(insert_p, (name, tournament_id,))
-    DB.commit()
-    DB.close()
+    with get_cursor() as cursor:
+        cursor.execute(insert_p, (name, tournament_id,))
 
 
 def playerStandings():
@@ -112,9 +102,9 @@ def playerStandings():
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
-    cur.execute("SELECT * FROM standings;")
-    t_standings = cur.fetchall()
-    DB.close()
+    with get_cursor() as cursor:
+        cursor.execute("SELECT * FROM standings;")
+        t_standings = cursor.fetchall()
     return t_standings
 
 
@@ -126,9 +116,8 @@ def reportMatch(winner, loser):
       loser:  the id number of the player who lost
     """
     i_match = "INSERT INTO match (winner, loser) VALUES (%s, %s);"
-    cur.execute(i_match, (winner, loser,))
-    DB.commit()
-    DB.close()
+    with get_cursor() as cursor:
+        cursor.execute(i_match, (winner, loser,))
 
 
 def invalidMatch(player1, player2):  # Function defined, but not being used.
@@ -148,8 +137,8 @@ def invalidMatch(player1, player2):  # Function defined, but not being used.
                        FROM match
                       WHERE winner = %s and loser = %s
                       );"""
-    a_rematch = cur.execute(invalid_match, (player1, player2,))
-    DB.close()
+    with get_cursor() as cursor:
+        a_rematch = cursor.execute(invalid_match, (player1, player2,))
     return a_rematch
 
 
@@ -168,18 +157,18 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
-    cur.execute("SELECT player_id, full_name FROM standings;")
-    standings = cur.fetchall()
-    pairings = []
-    # if len(pairings) % 2 != 0:
-    # Code for handling odd number of players. Coming soon.
+    with get_cursor() as cursor:
+        cursor.execute("SELECT player_id, full_name FROM standings;")
+        standings = cursor.fetchall()
+        pairings = []
+        # if len(pairings) % 2 != 0:
+        # Code for handling odd number of players. Coming soon.
 
-    # Using list comprehension for shorter code.
-    pairings = [(standings[i] + standings[i+1])
-                if not invalidMatch(standings[i][0], standings[i+1][0])
-                # I'm not confident with this else statement, even though
-                # all tests pass. Need to do more tests.
-                else standings[i] + standings[i+2]
-                for i in xrange(0, len(standings), 2)]
-    DB.close()
+        # Using list comprehension for shorter code.
+        pairings = [(standings[i] + standings[i+1])
+                    if not invalidMatch(standings[i][0], standings[i+1][0])
+                    # I'm not confident with this else statement, even though
+                    # all tests pass. Need to do more tests.
+                    else standings[i] + standings[i+2]
+                    for i in xrange(0, len(standings), 2)]
     return pairings
